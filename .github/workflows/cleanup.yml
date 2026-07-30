@@ -1,0 +1,32 @@
+name: Auto Delete Old Photos (KVKK)
+
+on:
+  schedule:
+    # Her saat başı çalışır
+    - cron: '0 * * * *'
+  workflow_dispatch: # İstediğinde elle de tetikleyebilirsin
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete jpg files older than 1 hour
+        run: |
+          # 3600 saniyeden (1 saat) eski tüm .jpg dosyalarını bul ve sil
+          find . -name "*.jpg" -type f -mmin +60 -delete
+          
+          # Değişiklik varsa commit ve push yap
+          git config --global user.name "KVKK Auto Cleaner"
+          git config --global user.email "auto-cleaner@korfez.bel.tr"
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "KVKK: 1 saati geçen fotoğraflar otomatik temizlendi"
+            git push
+          else
+            echo "Silinecek eski fotoğraf bulunamadı."
+          fi
