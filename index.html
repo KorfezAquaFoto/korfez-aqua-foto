@@ -45,45 +45,75 @@
             100% { transform: translate3d(85px,0,0); }
         }
 
-        /* YÜZEN RENKLİ BALIKLAR CSS */
-        .aquarium { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: hidden; }
+        /* AKVARYUM VE BALIK KATMANLARI */
+        .aquarium-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: hidden; }
+        .aquarium-front { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; pointer-events: none; overflow: hidden; }
         
         .fish {
             position: absolute;
             width: 45px;
             height: 30px;
-            opacity: 0.85;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
 
-        /* Soldan Sağa Yüzenler */
-        .fish-left-to-right {
-            animation: swim-right 12s linear infinite;
+        /* 1. ROTA: Sol Üstten Sağ Alta Çapraz Yüzüş */
+        .fish-diagonal-1 {
+            animation: swim-diag-1 14s linear infinite;
+        }
+        @keyframes swim-diag-1 {
+            0% { top: 5%; left: -80px; transform: scaleX(1) rotate(15deg); }
+            50% { transform: scaleX(1) rotate(5deg); }
+            100% { top: 75%; left: 105vw; transform: scaleX(1) rotate(20deg); }
         }
 
-        /* Sağdan Sola Yüzenler */
-        .fish-right-to-left {
-            transform: scaleX(-1);
-            animation: swim-left 15s linear infinite;
+        /* 2. ROTA: Sol Alttan Sağ Üste Çapraz Yüzüş */
+        .fish-diagonal-2 {
+            animation: swim-diag-2 16s linear infinite;
+        }
+        @keyframes swim-diag-2 {
+            0% { top: 85%; left: -80px; transform: scaleX(1) rotate(-20deg); }
+            50% { transform: scaleX(1) rotate(-5deg); }
+            100% { top: 15%; left: 105vw; transform: scaleX(1) rotate(-15deg); }
         }
 
-        /* Balık Konumları ve Hız Farkları */
-        .fish1 { top: 18%; animation-duration: 14s; animation-delay: 0s; width: 50px; }
-        .fish2 { top: 35%; animation-duration: 18s; animation-delay: 3s; width: 35px; opacity: 0.6; }
-        .fish3 { top: 62%; animation-duration: 11s; animation-delay: 1s; width: 45px; }
-        .fish4 { top: 78%; animation-duration: 16s; animation-delay: 5s; width: 55px; }
-        .fish5 { top: 48%; animation-duration: 13s; animation-delay: 2s; width: 40px; opacity: 0.7; }
-
-        @keyframes swim-right {
-            0% { left: -80px; transform: translateY(0px) scaleX(1); }
-            50% { transform: translateY(-15px) scaleX(1); }
-            100% { left: 105vw; transform: translateY(0px) scaleX(1); }
+        /* 3. ROTA: Sağ Alttan Sol Üste (Ters) */
+        .fish-diagonal-3 {
+            animation: swim-diag-3 18s linear infinite;
+        }
+        @keyframes swim-diag-3 {
+            0% { top: 80%; right: -80px; transform: scaleX(-1) rotate(15deg); }
+            50% { transform: scaleX(-1) rotate(0deg); }
+            100% { top: 10%; right: 105vw; transform: scaleX(-1) rotate(10deg); }
         }
 
-        @keyframes swim-left {
-            0% { right: -80px; transform: translateY(0px) scaleX(-1); }
-            50% { transform: translateY(15px) scaleX(-1); }
-            100% { right: 105vw; transform: translateY(0px) scaleX(-1); }
+        /* 4. ROTA: Düz Üst Bölüm Yüzüşü */
+        .fish-top-swim {
+            animation: swim-top 12s linear infinite;
+        }
+        @keyframes swim-top {
+            0% { top: 8%; left: -80px; transform: scaleX(1); }
+            50% { top: 14%; transform: scaleX(1); }
+            100% { top: 8%; left: 105vw; transform: scaleX(1); }
+        }
+
+        /* 5. ROTA: Düz Alt Bölüm Yüzüşü */
+        .fish-bottom-swim {
+            animation: swim-bottom 13s linear infinite;
+        }
+        @keyframes swim-bottom {
+            0% { top: 88%; right: -80px; transform: scaleX(-1); }
+            50% { top: 82%; transform: scaleX(-1); }
+            100% { top: 88%; right: 105vw; transform: scaleX(-1); }
+        }
+
+        /* 6. ROTA: Tam Ortadan Kartın Üstünden Geçen Yüzüş */
+        .fish-center-cross {
+            animation: swim-center 10s linear infinite;
+        }
+        @keyframes swim-center {
+            0% { top: 50%; left: -80px; transform: scaleX(1) rotate(-5deg); }
+            50% { top: 45%; transform: scaleX(1) rotate(10deg); }
+            100% { top: 52%; left: 105vw; transform: scaleX(1) rotate(-5deg); }
         }
 
         /* Modern Cam Efektli Kart */
@@ -98,7 +128,7 @@
             padding: 30px 24px; 
             text-align: center; 
             position: relative;
-            z-index: 10;
+            z-index: 10; /* Kart orta katmanda */
         }
 
         .logo { max-width: 180px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
@@ -161,50 +191,22 @@ viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
     </g>
 </svg>
 
-<!-- Arka Plan Yüzen Balıklar -->
-<div class="aquarium">
-    <!-- Turuncu Balık -->
-    <svg class="fish fish1 fish-left-to-right" viewBox="0 0 100 60">
-        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#ff7b00"/>
-        <path d="M20,30 L0,10 L0,50 Z" fill="#ff5100"/>
-        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
-        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
-    </svg>
-
-    <!-- Sarı/Kırmızı Palyaço Balığı -->
-    <svg class="fish fish2 fish-right-to-left" viewBox="0 0 100 60">
-        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#ffcc00"/>
-        <path d="M20,30 L0,15 L0,45 Z" fill="#ff9900"/>
-        <path d="M40,14 Q45,30 40,46" stroke="#ffffff" stroke-width="6" fill="none"/>
-        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
-        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
-    </svg>
-
-    <!-- Turkuaz/Mavi Balık -->
-    <svg class="fish fish3 fish-left-to-right" viewBox="0 0 100 60">
-        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00f2fe"/>
-        <path d="M20,30 L0,10 L0,50 Z" fill="#4facfe"/>
-        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
-        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
-    </svg>
-
-    <!-- Mor/Pembe Balık -->
-    <svg class="fish fish4 fish-right-to-left" viewBox="0 0 100 60">
+<!-- ARKA KATMAN BALIKLARI (Kartın Arkasından Geçenler) -->
+<div class="aquarium-back">
+    <!-- Küçük Mor Balık (Arka Üst) -->
+    <svg class="fish fish-top-swim" style="animation-delay: 2s; width: 35px; opacity: 0.5;" viewBox="0 0 100 60">
         <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#b827fc"/>
         <path d="M20,30 L0,10 L0,50 Z" fill="#2c1654"/>
-        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
-        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
     </svg>
 
-    <!-- Parlak Yeşil Balık -->
-    <svg class="fish fish5 fish-left-to-right" viewBox="0 0 100 60">
-        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00ff88"/>
-        <path d="M20,30 L0,15 L0,45 Z" fill="#00b359"/>
-        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
-        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    <!-- Turkuaz Balık (Arka Alt Çapraz) -->
+    <svg class="fish fish-diagonal-2" style="animation-delay: 4s; width: 40px; opacity: 0.6;" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00f2fe"/>
+        <path d="M20,30 L0,10 L0,50 Z" fill="#4facfe"/>
     </svg>
 </div>
 
+<!-- ORTA KATMAN: KART -->
 <div class="card" id="mainCard">
     <img src="logo.png" alt="Körfez Aqua Logo" class="logo" onerror="this.style.display='none'">
     
@@ -218,6 +220,42 @@ viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
         🔒 <b>KVKK ve Gizlilik Bildirimi:</b><br>
         Bu fotoğraf Körfez Aqua Park ziyaretiniz anında üretilmiştir. Fotoğraflarınız kişisel verilerin korunması kanunu gereği 1 saat sonra sistemden otomatik olarak silinecektir.
     </p>
+</div>
+
+<!-- ÖN KATMAN BALIKLARI (Kartın ve Fotoğrafın ÖNÜNDEN/ÜSTÜNDEN Geçenler) -->
+<div class="aquarium-front">
+    <!-- Büyük Turuncu Balık (Çapraz Üstten Alta Kartın Önünden Geçer) -->
+    <svg class="fish fish-diagonal-1" style="animation-delay: 0s; width: 55px; opacity: 0.95;" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#ff7b00"/>
+        <path d="M20,30 L0,10 L0,50 Z" fill="#ff5100"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Palyaço Balığı (Tam Ortadan Kartın Önünden Süzülür) -->
+    <svg class="fish fish-center-cross" style="animation-delay: 3s; width: 48px; opacity: 0.9;" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#ffcc00"/>
+        <path d="M20,30 L0,15 L0,45 Z" fill="#ff9900"/>
+        <path d="M40,14 Q45,30 40,46" stroke="#ffffff" stroke-width="6" fill="none"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Parlak Yeşil Balık (Alttan Ters Çapraz Ön Yüzüş) -->
+    <svg class="fish fish-diagonal-3" style="animation-delay: 1s; width: 50px; opacity: 0.95;" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00ff88"/>
+        <path d="M20,30 L0,15 L0,45 Z" fill="#00b359"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Mavi Balık (En Alttan Geçer) -->
+    <svg class="fish fish-bottom-swim" style="animation-delay: 5s; width: 42px; opacity: 0.9;" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00d2ff"/>
+        <path d="M20,30 L0,10 L0,50 Z" fill="#0072ff"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
 </div>
 
 <script>
