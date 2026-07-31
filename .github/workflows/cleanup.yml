@@ -2,30 +2,39 @@ name: Auto Delete Old Photos (KVKK)
 
 on:
   schedule:
-    # Her saat başı çalışır
     - cron: '0 * * * *'
-  workflow_dispatch: # İstediğinde elle de tetikleyebilirsin
+  workflow_dispatch:
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Repository Klonla
+        uses: actions/checkout@v3
 
-      - name: Delete jpg files older than 1 hour
+      - name: 1 Saatten Eski Fotoğrafları Sil
         run: |
-          # 3600 saniyeden (1 saat) eski tüm .jpg dosyalarını bul ve sil
-          find . -name "*.jpg" -type f -mmin +60 -delete
-          
-          # Değişiklik varsa commit ve push yap
-          git config --global user.name "KVKK Auto Cleaner"
-          git config --global user.email "auto-cleaner@korfez.bel.tr"
-          if [[ -n $(git status --porcelain) ]]; then
-            git add .
-            git commit -m "KVKK: 1 saati geçen fotoğraflar otomatik temizlendi"
+          NOW_MS=$(date +%s000)
+          CUTOFF_MS=$((NOW_MS - 3600000))  # 1 saat = 3.600.000 ms
+
+          for file in foto_*.jpg; do
+            if [ -f "$file" ]; then
+              # Dosya adındaki timestamp'i ayıkla (foto_1785480630195.jpg -> 1785480630195)
+              TS=$(echo "$file" | sed -E 's/foto_([0-9]+)\.jpg/\1/')
+              
+              if [ -n "$TS" ] && [ "$TS" -lt "$CUTOFF_MS" ]; then
+                echo "Siliniyor: $file (Zaman damgası: $TS)"
+                git rm "$file"
+              fi
+            fi
+          done
+
+      - name: Değişiklikleri Push Et
+        run: |
+          git config --global user.name "KVKK Auto Cleanup"
+          git config --global user.email "bot@github.com"
+          if ! git diff --cached --quiet; then
+            git commit -m "KVKK: 1 saati geçen fotoğraflar silindi"
             git push
           else
             echo "Silinecek eski fotoğraf bulunamadı."
