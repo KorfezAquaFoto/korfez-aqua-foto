@@ -8,7 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         body { 
-            background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc); 
+            background: linear-gradient(135deg, #0041a8, #0072ff, #3a88e9); 
             min-height: 100vh; 
             display: flex; 
             align-items: center; 
@@ -16,20 +16,20 @@
             padding: 20px; 
             color: #333; 
             position: relative;
-            overflow: hidden; /* Baloncukların taşmasını engelle */
+            overflow: hidden;
         }
 
         /* ÜSTTEKİ DALGA CSS */
         .waves {
             position: absolute;
-            top: 0; /* Üste sabitle */
+            top: 0;
             left: 0;
             width: 100%;
             height: 12vh;
             min-height: 70px;
             max-height: 120px;
-            z-index: 1; /* Arka planda kal */
-            transform: rotate(180deg); /* Dalgaları ters çevir (üstten aksın) */
+            z-index: 1;
+            transform: rotate(180deg);
         }
 
         .parallax > use {
@@ -45,39 +45,60 @@
             100% { transform: translate3d(85px,0,0); }
         }
 
-        /* ARKA PLAN BALONCUKLARI */
-        .bubbles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; overflow: hidden; }
-        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.3); border-radius: 50%; animation: bubble-up 10s infinite ease-in; opacity: 0; }
+        /* YÜZEN RENKLİ BALIKLAR CSS */
+        .aquarium { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: hidden; }
+        
+        .fish {
+            position: absolute;
+            width: 45px;
+            height: 30px;
+            opacity: 0.85;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        }
 
-        /* Farklı baloncuk boyutları ve süreleri */
-        .bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; animation-duration: 8s; animation-delay: 1s; }
-        .bubble:nth-child(2) { width: 20px; height: 20px; left: 20%; animation-duration: 5s; animation-delay: 3s; }
-        .bubble:nth-child(3) { width: 50px; height: 50px; left: 35%; animation-duration: 12s; animation-delay: 0s; }
-        .bubble:nth-child(4) { width: 30px; height: 30px; left: 50%; animation-duration: 7s; animation-delay: 5s; }
-        .bubble:nth-child(5) { width: 60px; height: 60px; left: 65%; animation-duration: 15s; animation-delay: 2s; }
-        .bubble:nth-child(6) { width: 25px; height: 25px; left: 80%; animation-duration: 6s; animation-delay: 4s; }
-        .bubble:nth-child(7) { width: 45px; height: 45px; left: 90%; animation-duration: 9s; animation-delay: 1s; }
+        /* Soldan Sağa Yüzenler */
+        .fish-left-to-right {
+            animation: swim-right 12s linear infinite;
+        }
 
-        @keyframes bubble-up {
-            0% { bottom: -100px; transform: translateX(0); opacity: 0; }
-            20% { opacity: 0.5; }
-            50% { transform: translateX(50px); }
-            100% { bottom: 100vh; transform: translateX(-50px); opacity: 0; }
+        /* Sağdan Sola Yüzenler */
+        .fish-right-to-left {
+            transform: scaleX(-1);
+            animation: swim-left 15s linear infinite;
+        }
+
+        /* Balık Konumları ve Hız Farkları */
+        .fish1 { top: 18%; animation-duration: 14s; animation-delay: 0s; width: 50px; }
+        .fish2 { top: 35%; animation-duration: 18s; animation-delay: 3s; width: 35px; opacity: 0.6; }
+        .fish3 { top: 62%; animation-duration: 11s; animation-delay: 1s; width: 45px; }
+        .fish4 { top: 78%; animation-duration: 16s; animation-delay: 5s; width: 55px; }
+        .fish5 { top: 48%; animation-duration: 13s; animation-delay: 2s; width: 40px; opacity: 0.7; }
+
+        @keyframes swim-right {
+            0% { left: -80px; transform: translateY(0px) scaleX(1); }
+            50% { transform: translateY(-15px) scaleX(1); }
+            100% { left: 105vw; transform: translateY(0px) scaleX(1); }
+        }
+
+        @keyframes swim-left {
+            0% { right: -80px; transform: translateY(0px) scaleX(-1); }
+            50% { transform: translateY(15px) scaleX(-1); }
+            100% { right: 105vw; transform: translateY(0px) scaleX(-1); }
         }
 
         /* Modern Cam Efektli Kart */
         .card { 
-            background: rgba(255, 255, 255, 0.90); 
+            background: rgba(255, 255, 255, 0.92); 
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 24px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3); 
             width: 100%; 
             max-width: 420px; 
             padding: 30px 24px; 
             text-align: center; 
             position: relative;
-            z-index: 10; /* En üstte dur */
+            z-index: 10;
         }
 
         .logo { max-width: 180px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
@@ -126,7 +147,7 @@
 </head>
 <body>
 
-<!-- Arka Plan Üst Dalga Svg -->
+<!-- Arka Plan Üst Dalga -->
 <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
 viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
     <defs>
@@ -140,15 +161,48 @@ viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
     </g>
 </svg>
 
-<!-- Arka Plan Baloncukları -->
-<div class="bubbles">
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
-    <div class="bubble"></div>
+<!-- Arka Plan Yüzen Balıklar -->
+<div class="aquarium">
+    <!-- Turuncu Balık -->
+    <svg class="fish fish1 fish-left-to-right" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#ff7b00"/>
+        <path d="M20,30 L0,10 L0,50 Z" fill="#ff5100"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Sarı/Kırmızı Palyaço Balığı -->
+    <svg class="fish fish2 fish-right-to-left" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#ffcc00"/>
+        <path d="M20,30 L0,15 L0,45 Z" fill="#ff9900"/>
+        <path d="M40,14 Q45,30 40,46" stroke="#ffffff" stroke-width="6" fill="none"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Turkuaz/Mavi Balık -->
+    <svg class="fish fish3 fish-left-to-right" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00f2fe"/>
+        <path d="M20,30 L0,10 L0,50 Z" fill="#4facfe"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Mor/Pembe Balık -->
+    <svg class="fish fish4 fish-right-to-left" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#b827fc"/>
+        <path d="M20,30 L0,10 L0,50 Z" fill="#2c1654"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
+
+    <!-- Parlak Yeşil Balık -->
+    <svg class="fish fish5 fish-left-to-right" viewBox="0 0 100 60">
+        <path d="M20,30 Q40,5 70,30 Q40,55 20,30 Z" fill="#00ff88"/>
+        <path d="M20,30 L0,15 L0,45 Z" fill="#00b359"/>
+        <circle cx="60" cy="22" r="3" fill="#ffffff"/>
+        <circle cx="61" cy="22" r="1.5" fill="#000000"/>
+    </svg>
 </div>
 
 <div class="card" id="mainCard">
@@ -167,7 +221,6 @@ viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
 </div>
 
 <script>
-    // ... JavaScript kodları aynı kalıyor ...
     const urlParams = new URLSearchParams(window.location.search);
     const photoName = urlParams.get('f');
     let targetPhotoUrl = '';
