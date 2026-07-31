@@ -3,49 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Körfez Aqua - Greenbox Fotoğraf Teslimatı</title>
+    <title>Körfez Aqua - Dijital Fotoğraf Teslimatı</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: linear-gradient(135deg, #0072ff, #00c6ff); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: #333; }
         .card { background: #ffffff; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 420px; padding: 25px; text-align: center; }
         .logo { max-width: 180px; height: auto; margin-bottom: 15px; }
-        .photo-container { border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: 15px 0; background: #f8f9fa; min-height: 200px; display: flex; align-items: center; justify-content: center; }
+        .photo-container { border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: 15px 0; background: #f8f9fa; min-height: 200px; display: flex; align-items: center; justify-content: center; position: relative; }
         .photo-container img { width: 100%; height: auto; display: block; border-radius: 12px; }
-        .btn-download { display: inline-block; width: 100%; background: #0072ff; color: #fff; font-weight: bold; font-size: 16px; padding: 14px; border-radius: 10px; text-decoration: none; transition: background 0.3s; box-shadow: 0 4px 12px rgba(0,114,255,0.3); margin-top: 10px; }
+        
+        .btn-download { display: inline-block; width: 100%; background: #0072ff; color: #fff; font-weight: bold; font-size: 16px; padding: 14px; border-radius: 10px; text-decoration: none; transition: background 0.3s, opacity 0.3s; box-shadow: 0 4px 12px rgba(0,114,255,0.3); margin-top: 10px; border: none; cursor: pointer; }
         .btn-download:active { background: #0056b3; }
+        .btn-download.disabled { background: #888; cursor: not-allowed; box-shadow: none; }
+        
         .kvkk-info { font-size: 11px; color: #777; margin-top: 18px; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="mainCard">
     <!-- Körfez Aqua Logosu -->
     <img src="logo.png" alt="Körfez Aqua Logo" class="logo" onerror="this.style.display='none'">
     
     <div class="photo-container">
-        <img id="userPhoto" src="" alt="Fotoğraf Yükleniyor...">
+        <img id="userPhoto" src="" alt="Fotoğraf Yükleniyor..." onerror="handleImageError()">
     </div>
 
-    <a id="downloadBtn" href="#" download class="btn-download">FOTOĞRAFI İNDİR</a>
+    <button id="downloadBtn" class="btn-download" onclick="downloadImage()">FOTOĞRAFI İNDİR</button>
 
     <p class="kvkk-info">
         🔒 <b>KVKK ve Gizlilik Bildirimi:</b><br>
-        Bu fotoğraf Körfez Aqua ziyaretiniz anında üretilmiştir. Fotoğraflarınız kişisel verilerin korunması kanunu gereği 1 saat sonra sistemden otomatik olarak silinecektir.
+        Bu fotoğraf Körfez Aqua Park ziyaretiniz anında üretilmiştir. Fotoğraflarınız kişisel verilerin korunması kanunu gereği 1 saat sonra sistemden otomatik olarak silinecektir.
     </p>
 </div>
 
 <script>
-    // URL'den fotoğraf parametresini alma (?f=foto_123.jpg)
     const urlParams = new URLSearchParams(window.location.search);
     const photoName = urlParams.get('f');
+    let targetPhotoUrl = '';
+
+    function handleImageError() {
+        document.getElementById('mainCard').innerHTML = `
+            <img src="logo.png" alt="Körfez Aqua Logo" class="logo" style="max-width:150px; margin-bottom:20px;" onerror="this.style.display='none'">
+            <h3 style="color: #d9534f; margin-bottom: 10px;">Fotoğraf Bulunamadı</h3>
+            <p style="color: #666; font-size: 14px; line-height: 1.5;">
+                Bu fotoğrafın yayın süresi (1 saat) dolduğu için KVKK politikaları gereği sistemden güvenli bir şekilde silinmiştir.
+            </p>
+        `;
+    }
 
     if (photoName) {
-        const photoUrl = 'https://raw.githubusercontent.com/KorfezAquaFoto/korfez-aqua-foto/main/' + photoName;
-        document.getElementById('userPhoto').src = photoUrl;
-        document.getElementById('downloadBtn').href = photoUrl;
-        document.getElementById('downloadBtn').target = "_blank";
+        // Doğrudan deponun raw linkinden çeker
+        targetPhotoUrl = 'https://raw.githubusercontent.com/KorfezAquaFoto/korfez-aqua-foto/main/' + photoName;
+        const img = document.getElementById('userPhoto');
+        img.src = targetPhotoUrl + '?t=' + new Date().getTime(); // Önbellek aşımı için
     } else {
-        document.querySelector('.card').innerHTML = '<h3>Fotoğraf bulunamadı veya süresi doldu.</h3>';
+        handleImageError();
+    }
+
+    // Doğrudan İndirme Fonksiyonu (Blob Mantığı)
+    async function downloadImage() {
+        const btn = document.getElementById('downloadBtn');
+        if (!targetPhotoUrl) return;
+
+        const originalText = btn.innerText;
+        btn.innerText = "İNDİRİLİYOR...";
+        btn.classList.add('disabled');
+
+        try {
+            const response = await fetch(targetPhotoUrl);
+            if (!response.ok) throw new Error('Resim alınamadı');
+            
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = blobUrl;
+            a.download = photoName || 'korfez_aqua_fotograf.jpg';
+            
+            document.body.appendChild(a);
+            a.click();
+            
+            window.URL.revokeObjectURL(blobUrl);
+            document.body.removeChild(a);
+        } catch (err) {
+            // Eğer fetch engellenirse yedek doğrudan indirme denemesi
+            window.location.href = targetPhotoUrl;
+        } finally {
+            btn.innerText = originalText;
+            btn.classList.remove('disabled');
+        }
     }
 </script>
 
